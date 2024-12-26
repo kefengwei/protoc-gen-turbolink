@@ -34,13 +34,12 @@ void U<#=service.Name#>Client::<#=method.Name#>(FGrpcContextHandle Handle, const
 	if (context != nullptr)
 	{
 		auto context<#=method.Name#> = StaticCastSharedPtr<GrpcContext_<#=service.Name#>_<#=method.Name#>>(*context);
+
 		for (const auto& metaDataPair : MetaData.MetaData)
 		{
-			context<#=method.Name#>->RpcContext->AddMetadata(
-				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
-				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
-			);
+			context->Get()->RpcContext->AddMetadata(TCHAR_TO_UTF8(*metaDataPair.Key), TCHAR_TO_UTF8(*metaDataPair.Value));
 		}
+
 
 		if (DeadLineSeconds > 0.f)
 		{
@@ -48,6 +47,7 @@ void U<#=service.Name#>Client::<#=method.Name#>(FGrpcContextHandle Handle, const
 				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
 			context<#=method.Name#>->RpcContext->set_deadline(deadLine);
 		}
+
 		context<#=method.Name#>->Call(Request);
 	}
 }
